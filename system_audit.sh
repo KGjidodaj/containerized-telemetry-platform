@@ -159,15 +159,8 @@ session_date_var=$(date "+%Y-%m-%dT%H:%M:%S")
 user=$(whoami)
 
 ### checking if linux-telemetry directory exists in case user copied file (e.g. to a docker container) without the directory
-directory_location=$(find "$HOME" -name linux-telemetry)
 
-
-if [[ "$directory_location" == "" ]];then #had some problems so made it with quotes
-        mkdir -p "$HOME/linux-telemetry" >/dev/null 2>&1 # in case someone does not already have the directory ready to avoid variable LOG_FILE errors
-fi
-
-
-LOG_FILE="$HOME/linux-telemetry/audit.log"
+LOG_FILE="$PWD/logs/audit.log"
 
 ### Checking for sudo dependecies according to user :
 
@@ -178,8 +171,11 @@ else
 
 fi
 
-
-
+# Adding a check if the file does not exist for it to be created and allowed to be written in
+if [[ ! -f logs/audit.log ]];then
+	$sudo_cmd touch "$LOG_FILE" >/dev/null 2>&1
+	$sudo_cmd chmod 666 "$LOG_FILE"
+fi
 
 
 # ==========================================
@@ -246,7 +242,6 @@ check_dependencies() {
 
 # using a divider to clarify output
 DIVIDER="---------------------------------------------------"
-
 echo -e "Hello $user\n" >> "$LOG_FILE"
 
 
@@ -270,7 +265,7 @@ while :
         do
 
         echo -e "${White}What would you like to do${Reset}\n"
-        echo -e "${Cyan}1.system-telemetrics (check info about cpu/ram/disk/network)\n2.security-forensics (check possible security breach)\n3.active remediation (check what is causing the system to crash and resolve it)\n4.Exit${Reset}\n"
+        echo -e "${Cyan}1.system-telemetrics (check info about cpu/ram/disk/network)\n2.security-forensics (check possible security breach)\n3.active remediation (check what is causing the system to crash and resolve it)\n4.Security Forensics & Port Audit(Do a network scan for certain Ip and ports)\n5.Exit${Reset}\n"
         read -r answer
         clear
 
@@ -672,7 +667,18 @@ while :
 
                         done ;;
 
-                4)
+		4)
+
+			echo -e "${White}[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]${Reset}"
+			echo "[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]" >> "$LOG_FILE"
+			echo -e "${White}Input the IP addresses and ports you want to check seperated with a coloumn and a space for different addresses\n(e.g 8.8.8.8:53 127.0.0.1:22)"
+			read -r  user_ip_ports
+			echo "$DIVIDER" | tee -a "$LOG_FILE"
+			python3 network_scanner.py "$user_ip_ports" | tee -a "$LOG_FILE" ;;
+
+
+
+                5)
 
 			echo "$DIVIDER"
                         echo -e " $user  ${Green} Exiting...${Reset} \n"
