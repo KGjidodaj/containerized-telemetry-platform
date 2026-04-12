@@ -174,8 +174,9 @@ fi
 # Adding a check if the file does not exist for it to be created and allowed to be written in
 if [[ ! -f logs/audit.log ]];then
 	$sudo_cmd touch "$LOG_FILE" >/dev/null 2>&1
-	$sudo_cmd chmod 666 "$LOG_FILE"
 fi
+# Using chmod every time (no ouput) just in case the user  changes something
+	$sudo_cmd chmod 666 "$LOG_FILE" >/dev/null 2>&1
 
 
 # ==========================================
@@ -672,7 +673,7 @@ while :
 			echo -e "${White}[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]${Reset}"
 			echo "[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]" >> "$LOG_FILE"
 			echo -e "${White}Input the IP addresses and ports you want to check seperated with a coloumn and a space for different addresses\n(e.g 8.8.8.8:53 127.0.0.1:22)"
-			read -r  user_ip_ports
+			read -e -r  user_ip_ports
 			echo "$DIVIDER" | tee -a "$LOG_FILE"
 			python3 network_scanner.py "$user_ip_ports" | tee -a "$LOG_FILE" ;;
 
