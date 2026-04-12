@@ -5,6 +5,9 @@ Thumbs.db
 # --- Logs ---
 *.log
 
+# --- SQL ---
+*.sql
+
 # --- Python ---
 __pycache__/
 *.pyc
