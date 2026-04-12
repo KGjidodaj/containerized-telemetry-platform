@@ -266,7 +266,7 @@ while :
         do
 
         echo -e "${White}What would you like to do${Reset}\n"
-        echo -e "${Cyan}1.system-telemetrics (check info about cpu/ram/disk/network)\n2.security-forensics (check possible security breach)\n3.active remediation (check what is causing the system to crash and resolve it)\n4.Security Forensics & Port Audit(Do a network scan for certain Ip and ports)\n5.Exit${Reset}\n"
+        echo -e "${Cyan}1.system-telemetrics (check info about cpu/ram/disk/network)\n\n2.security-forensics (check possible security breach)\n\n3.active remediation (check what is causing the system to crash and resolve it)\n\n4.Security Forensics & Port Audit(Do a network scan for certain Ip and ports)\n\n5.Security Report (get logs in the screen ready to read)\n\n6.Exit${Reset}\n"
         read -r answer
         clear
 
@@ -670,16 +670,71 @@ while :
 
 		4)
 
+			## Allowing user to search for open ports that could be a cybersec danger.
 			echo -e "${White}[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]${Reset}"
 			echo "[NETWORK SENTINEL: Attack Surface & Peer Node Discovery]" >> "$LOG_FILE"
 			echo -e "${White}Input the IP addresses and ports you want to check seperated with a coloumn and a space for different addresses\n(e.g 8.8.8.8:53 127.0.0.1:22)"
-			read -e -r  user_ip_ports
+			read -e -r  user_ip_ports # -e flag to allow user to edit answer in case of error
+
 			echo "$DIVIDER" | tee -a "$LOG_FILE"
-			python3 network_scanner.py "$user_ip_ports" | tee -a "$LOG_FILE" ;;
+			# saving scan results in a variable to use after
+			scan_result=$(python3 network_scanner.py "$user_ip_ports")
+
+			if  echo "$scan_result" | grep -q "Message" ;then
+				#in case the folder has not been created yet
+				if [[ ! -f "$PWD/logs/Threat.log" ]];then
+
+					# Sometimes docker root user can cause privilage conflicts
+					$sudo_cmd touch "logs/Threat.log"
+					$sudo_cmd chmod 666 "logs/Threat.log"
+				fi
+
+				echo -e "$scan_result\n" | tee -a "$LOG_FILE" "$PWD/logs/Threat.log"
+			else
+				echo -e "$scan_result\n" | tee -a "$LOG_FILE"
+			fi
+			;;
+
+
+		5)
+
+			if [[ ! -f "logs/Threat.log" ]];then
+				echo -e "${Yellow} Logs missing: try running case 4 first ${Reset}"
+			else
+
+				if [[ $(wc -l < logs/Threat.log) == "0 Threat.log" ]];then
+                                        echo -e "\n${Green}                          [STATUS: SECURE]${Reset}"
+                                else
+                                        echo -e "\n${Red}                          [STATUS: CRITICAL EXPOSURE]${Reset}"
+
+                                fi
+
+				echo -e "${Yellow}The Threat.log file shows all the open ports and security threats!\nThe audi.log file saves all the logs from the system_audit.sh script!${Reset}"
+				echo -e "${White}$DIVIDER$DIVIDER${Reset}"
+				echo -e "${White}                               [Security Report]${Reset}"
+
+				echo -e "${Cyan} File:lines ${Reset}\n"
+				echo -e "${Cyan} 1)  Threat.log:$(wc -l < logs/Threat.log) \n 2)  audit.log:$(wc -l < logs/audit.log)${Reset}"
+
+				echo -e "\n${White}Which file would you like to open?${Reset}"
+				read -e -r user_choice4
+				echo -e "${White}How many lines would you like the file to be?${Reset}"
+				read -e -r lines
+
+				if [[ $user_choice4 == "audit.log" ]];then
+					tail -n "$lines" logs/audit.log | $page_cmd
+				elif [[ $user_choice4 == "Threat.log" ]];then
+					tail -n "$lines" logs/Threat.log | $page_cmd
+				fi
+
+			fi
+
+		;;
 
 
 
-                5)
+
+                6)
 
 			echo "$DIVIDER"
                         echo -e " $user  ${Green} Exiting...${Reset} \n"

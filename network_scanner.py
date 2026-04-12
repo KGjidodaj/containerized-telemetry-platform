@@ -40,7 +40,7 @@ try:
             except:
                 banner_data = ""
             now = datetime.now()
-            active_threats.append([ now.isoformat(timespec='seconds'),ip,port,f"Message: {banner_data}"]) ### Log identified threat payload alongside timestamp and banner output.
+            active_threats.append([ now.isoformat(timespec='seconds'),ip,f"Port: {port}",f"Message: {banner_data}"]) ### Log identified threat payload alongside timestamp and banner output.
             scanner_socket.close()
 
         else:
