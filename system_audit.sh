@@ -7,6 +7,15 @@
 # ==================================================================
 
 
+### Checking for sudo dependecies according to user :
+
+if command -v "sudo" > /dev/null 2>&1 ;then
+        sudo_cmd="sudo"
+else
+        sudo_cmd=""
+
+fi
+
 
 ## Also adding a check if less command exists to use it or else use cat -n
 if command -v less >/dev/null 2>&1; then
@@ -86,6 +95,24 @@ fi
 
 
 
+## Creating .env file if it does not exists
+if [[ ! -f ".env" ]] ;then
+	echo -e "${White}Do you want add your own webhook? (Yes/No)\n${Reset}"
+	read -r user_answer
+	if [[ $user_answer == "Yes" || $user_answer == "yes" ]];then
+		echo -e "${White}Input your URL${Reset}\n"
+		read -r user_url
+		$sudo_cmd touch ".env"
+		$sudo_cmd chmod 666 ".env"
+		echo "$user_url" > ".env"
+	fi
+fi
+
+
+
+
+
+
 
 
 
@@ -161,15 +188,6 @@ user=$(whoami)
 ### checking if linux-telemetry directory exists in case user copied file (e.g. to a docker container) without the directory
 
 LOG_FILE="$PWD/logs/audit.log"
-
-### Checking for sudo dependecies according to user :
-
-if command -v "sudo" > /dev/null 2>&1 ;then
-        sudo_cmd="sudo"
-else
-        sudo_cmd=""
-
-fi
 
 # Adding a check if the file does not exist for it to be created and allowed to be written in
 if [[ ! -f logs/audit.log ]];then
@@ -680,13 +698,23 @@ while :
 			# saving scan results in a variable to use after
 			scan_result=$(python3 network_scanner.py "$user_ip_ports")
 
-			if  echo "$scan_result" | grep -q "Message" ;then
-				#in case the folder has not been created yet
-				if [[ ! -f "$PWD/logs/Threat.log" ]];then
+			#in case the folder has not been created yet
+                        if [[ ! -f "$PWD/logs/Threat.log" ]];then
 
-					# Sometimes docker root user can cause privilage conflicts
-					$sudo_cmd touch "logs/Threat.log"
-					$sudo_cmd chmod 666 "logs/Threat.log"
+                                # Sometimes docker root user can cause privilage conflicts
+                                $sudo_cmd touch "logs/Threat.log"
+                                $sudo_cmd chmod 666 "logs/Threat.log"
+                        fi
+
+			if  echo "$scan_result" | grep -q "Port" ;then
+
+				#Alert is sent to dicord URL via curl
+				URL=$(cat .env)
+				message="[Critical Alert]:                                                                                                                                                                                                   $scan_result"
+				if command -v curl >/dev/null 2>&1 ;then
+					curl -d "content= $message" "$URL"  ## sending scan_result to discord_server
+				else
+					echo "curl does not exist stopping"
 				fi
 
 				echo -e "$scan_result\n" | tee -a "$LOG_FILE" "$PWD/logs/Threat.log"
@@ -702,8 +730,8 @@ while :
 				echo -e "${Yellow} Logs missing: try running case 4 first ${Reset}"
 			else
 
-				if [[ $(wc -l < logs/Threat.log) == "0 Threat.log" ]];then
-                                        echo -e "\n${Green}                          [STATUS: SECURE]${Reset}"
+				if [[ $(wc -l < logs/Threat.log) == 0 ]];then
+                                        echo -e "\n${Green}                               [STATUS: SECURE]${Reset}\n"
                                 else
                                         echo -e "\n${Red}                          [STATUS: CRITICAL EXPOSURE]${Reset}"
 

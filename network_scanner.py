@@ -45,7 +45,6 @@ try:
 
         else:
 
-            print("Could not connect with the server")
             scanner_socket.close()
 
     print(active_threats)
