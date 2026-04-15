@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /opt/sentinel
 
+RUN mkdir logs
+
 COPY system_audit.sh network_scanner.py ./
 
 RUN chmod +x system_audit.sh

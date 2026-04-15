@@ -128,7 +128,7 @@ if ! grep -q "alias telemetry=" "$HOME"/.bashrc  ;then
 	# in case of a docker container alias telemetry will never be set, so to avoid re writing lines again and again a check is done
 	if ! grep -q "export log_lines=" "$HOME"/.bashrc ;then
 
-	echo -e "${Yellow} Warning:\nYour Log File is stored in $HOME/linux-telemetry/audit.log ${Reset}"
+	echo -e "${Yellow} Warning:\nYour Log File is stored in $PWD/logs/audit.log ${Reset}"
 	# In a while loop to "trap" the user if they do not input a number!
 	while :
 		do
@@ -742,16 +742,16 @@ while :
 				echo -e "${White}                               [Security Report]${Reset}"
 
 				echo -e "${Cyan} File:lines ${Reset}\n"
-				echo -e "${Cyan} 1)  Threat.log:$(wc -l < logs/Threat.log) \n 2)  audit.log:$(wc -l < logs/audit.log)${Reset}"
+				echo -e "${Cyan} 1)  Threat.log:$(wc -l < logs/Threat.log) \n 2)  audit.log:$(wc -l < logs/audit.log)\n (pick 1/2)${Reset}"
 
 				echo -e "\n${White}Which file would you like to open?${Reset}"
 				read -e -r user_choice4
 				echo -e "${White}How many lines would you like the file to be?${Reset}"
 				read -e -r lines
 
-				if [[ $user_choice4 == "audit.log" ]];then
+				if [[ $user_choice4 == 1 ]];then
 					tail -n "$lines" logs/audit.log | $page_cmd
-				elif [[ $user_choice4 == "Threat.log" ]];then
+				elif [[ $user_choice4 == 2 ]];then
 					tail -n "$lines" logs/Threat.log | $page_cmd
 				fi
 

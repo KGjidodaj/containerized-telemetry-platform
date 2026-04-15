@@ -15,23 +15,51 @@ CREATE TABLE employees (
 );
 DB_CREATION
 
-# Setting up the user as admin once
+# Setting up the user as admin once for the init.sql file
 user=$(whoami)
 echo "INSERT INTO employees (username, password, role) VALUES ('$user', 'P@ssw0rd123!', 'admin');" >> "init.sql"
+
+# setting up the html file with some generic colour
+cat <<HTML_CREATION > "index.html"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background-color: #1e1e1e; color: #00ff00; font-family: monospace; padding: 20px; }
+        table { border-collapse: collapse; width: 50%; background-color: #2d2d2d; }
+        th, td { border: 1px solid #555; padding: 8px; text-align: left; }
+        th { background-color: #444; }
+    </style>
+</head>
+<body>
+    <h1> Employee Intranet - Accounts Directory</h1>
+    <table>
+        <tr>
+            <th>Username:</th>
+            <th>Password:</th>
+        </tr>
+HTML_CREATION
 
 # Initializing load_percent and bar for a graphical UX experience
 load_per=0
 bar=""
 
-for ((i=0; i<1000; i++))
+for ((i=0; i<500; i++))
 
 do
         username=$(./username_generator.py 2> /dev/null)
         password=$(./password_generator.py 2> /dev/null)
+	# saving into init.sql
         echo "INSERT INTO employees (username, password, role) VALUES ('$username', '$password', 'user');" >> "init.sql"
+	# saving into index.html
+        { echo "        <tr>"
+        echo "            <td>$username</td>"
+        echo "            <td>$password</td>"
+        echo "        </tr>"
+        } >> "index.html"
 
         # every 100 iterations the percentage increases
-        if (( i%10 == 0 ));then
+        if (( i%5 == 0 ));then
                 (( load_per++ ))
 
                 # Halfing the 100 iterations so only 50 equal signs are outputted to avoid char warping
@@ -43,4 +71,10 @@ do
         echo -ne "\r[Configuring Database]                                                                                                                    ${bar}> (${load_per}%)"
 done
 
-echo -e "\n\n                                                                              ---Done SQL Initialization---"
+echo -e "\n\n                                                                              ---Done SQL&HTML Initialization---"
+
+# Close the file
+{ echo "    </table>"
+echo "</body>"
+echo "</html>"
+} >> "index.html"
