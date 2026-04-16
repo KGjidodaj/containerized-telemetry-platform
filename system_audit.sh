@@ -100,11 +100,15 @@ if [[ ! -f ".env" ]] ;then
 	echo -e "${White}Do you want add your own webhook? (Yes/No)\n${Reset}"
 	read -r user_answer
 	if [[ $user_answer == "Yes" || $user_answer == "yes" ]];then
+
 		echo -e "${White}Input your URL${Reset}\n"
 		read -r user_url
 		$sudo_cmd touch ".env"
 		$sudo_cmd chmod 666 ".env"
 		echo "$user_url" > ".env"
+	else
+		echo -e "${Yellow} Skipping .env part${Reset}"
+
 	fi
 fi
 
@@ -708,13 +712,18 @@ while :
 
 			if  echo "$scan_result" | grep -q "Port" ;then
 
-				#Alert is sent to dicord URL via curl
-				URL=$(cat .env)
-				message="[Critical Alert]:                                                                                                                                                                                                   $scan_result"
-				if command -v curl >/dev/null 2>&1 ;then
-					curl -d "content= $message" "$URL"  ## sending scan_result to discord_server
+				#Alert is sent to dicord URL via curl if .env exists
+				if [[ -f .env ]];then
+					URL=$(cat .env)
+					message="[Critical Alert]:                                                                                                                                                                                                   $scan_result"
+					if command -v curl >/dev/null 2>&1 ;then
+						curl -d "content= $message" "$URL"  ## sending scan_result to discord_server
+					else
+						echo "curl does not exist stopping"
+					fi
 				else
-					echo "curl does not exist stopping"
+					echo -e "${Yellow} no URL found to send alert${Reset}\n"
+
 				fi
 
 				echo -e "$scan_result\n" | tee -a "$LOG_FILE" "$PWD/logs/Threat.log"
@@ -749,9 +758,9 @@ while :
 				echo -e "${White}How many lines would you like the file to be?${Reset}"
 				read -e -r lines
 
-				if [[ $user_choice4 == 1 ]];then
+				if [[ $user_choice4 == 2 ]];then
 					tail -n "$lines" logs/audit.log | $page_cmd
-				elif [[ $user_choice4 == 2 ]];then
+				elif [[ $user_choice4 == 1 ]];then
 					tail -n "$lines" logs/Threat.log | $page_cmd
 				fi
 
