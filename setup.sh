@@ -10,7 +10,7 @@ fi
 
 echo "Setting up privilages for all the files"
 
-$sudo_cmd chmod +x system_audit.sh >/dev/null 2>&1
+$sudo_cmd chmod +x system_audit.sh cleanup.sh >/dev/null 2>&1
 
 cd data_seeder
 
@@ -24,5 +24,5 @@ echo "setting up .html and .sql files"
 cd ..
 
 # calling the composer (docker-compose)
-$sudo_cmd docker-compose up -d --build
+$sudo_cmd docker compose up -d --build
 

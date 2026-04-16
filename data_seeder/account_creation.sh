@@ -68,7 +68,7 @@ do
                 fi
         fi
         # using -ne and \r so the same line is rewritten with the load bar
-        echo -ne "\r[Configuring Database]                                                                                                                    ${bar}> (${load_per}%)"
+        echo -ne "\r[Configuring Database]                                                                                                             ${bar}> (${load_per}%)"
 done
 
 echo -e "\n\n                                                                              ---Done SQL&HTML Initialization---"
