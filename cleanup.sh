@@ -10,7 +10,7 @@ fi
 
 echo "cleaning up the directory"
 
-$sudo_cmd docker compose down
+$sudo_cmd docker compose down -v
 
 cd ..
 

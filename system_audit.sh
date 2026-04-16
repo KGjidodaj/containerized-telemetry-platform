@@ -208,8 +208,6 @@ fi
 check_dependencies() {
 
         local program=$1 #storing the name into a variable and checking if the program is installed
-        command -v "$program" > /dev/null 2>&1
-
         if  ! command -v "$program" > /dev/null 2>&1 ;then
 
                 # Trying older netstat and if config in case it works then saving them in dep_command variable

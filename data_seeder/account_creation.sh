@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
+if ! command -v python3 >/dev/null 2>&1 ;then
+	echo "Python missing install it first"
+	exit 1
+fi
+
 sleep 0.7
 clear
 echo "                                                                                [DATABASE INITIALIZATION:]"
 # creating the DB with VARCHAR 16 and password 21, as the python files output 15 and 20 (+1 for security reasons)
-cat <<DB_CREATION > "init.sql"
+cat <<DB_CREATION > "init.sql" ## the init.sql will create a different database than mockDB (which is empty)
 CREATE DATABASE IF NOT EXISTS company_db;
 USE company_db;
 CREATE TABLE employees (
@@ -17,6 +22,7 @@ DB_CREATION
 
 # Setting up the user as admin once for the init.sql file
 user=$(whoami)
+# using a different password for root and admin users here and in the docker-compose file with only difference the o and 0 
 echo "INSERT INTO employees (username, password, role) VALUES ('$user', 'P@ssw0rd123!', 'admin');" >> "init.sql"
 
 # setting up the html file with some generic colour
@@ -58,7 +64,7 @@ do
         echo "        </tr>"
         } >> "index.html"
 
-        # every 100 iterations the percentage increases
+        # adding this for the percentage to increase as a (load bar)
         if (( i%5 == 0 ));then
                 (( load_per++ ))
 

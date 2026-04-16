@@ -20,7 +20,6 @@ try:
     crit_add = final_list
 
     # The active_threats list is a dynamic structure with info about IPs with open ports for security reasons.
-    # The CRITICAL_ADDRESSES tuple is a mock-set that I can not change with the IPs and the ports.
     active_threats = []
 
 
