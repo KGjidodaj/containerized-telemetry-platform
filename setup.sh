@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# check if docker is installed
+if ! command -v docker >/dev/null 2>&1 ;then
+	echo "Docker is not installed : try installing it"
+	exit 0
+fi
+
+
 # sudo privilages
 if command -v sudo ;then
 	sudo_cmd="sudo"

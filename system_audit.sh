@@ -231,8 +231,8 @@ check_dependencies() {
                 echo -e "${Yellow}WARNING: Might Take Some Minutes!${Reset}"
 		# According to the package manager and os release
 
-                $sudo_cmd "$Package_man_update"  >/dev/null 2>&1 #updating in case machine has not been updated
-                $sudo_cmd "$Package_man_install" >/dev/null 2>&1 #trying to install the program in the background
+                $sudo_cmd $Package_man_update  >/dev/null 2>&1 #updating in case machine has not been updated
+                $sudo_cmd $Package_man_install >/dev/null 2>&1 #trying to install the program in the background
 
 
                 if [[ $? -ne 0 ]];then
@@ -284,6 +284,8 @@ fi
 
 while :
         do
+
+	invalid_input=0 ##setting it equal to 0 again and again as it is also set as 1 in the while loop
 
         echo -e "${White}What would you like to do${Reset}\n"
         echo -e "${Cyan}1.system-telemetrics (check info about cpu/ram/disk/network)\n\n2.security-forensics (check possible security breach)\n\n3.active remediation (check what is causing the system to crash and resolve it)\n\n4.Security Forensics & Port Audit(Do a network scan for certain Ip and ports)\n\n5.Security Report (get logs in the screen ready to read)\n\n6.Exit${Reset}\n"
@@ -441,7 +443,7 @@ while :
                                            #4.Information about user's Ip and network basics
                                            echo -e "${Cyan}Would you like to learn about your Network Interface Configuration or Socket Statistics?(1/2)\nPress Enter to skip${Reset}"
                                            read -r -p "" Network_choice
-                                           case $Network_choice in
+					   case $Network_choice in
 
                                                 1)
 
@@ -460,7 +462,7 @@ while :
                                                 *)
 
                                                    echo -e "${Yellow}Invalid Input-Skipping\n${Reset}"
-						   #Invalid input check to not have audit sucssessfully complte
+						   #Invalid input check to not have audit sucssessfully complete
 						   invalid_input=1 ;;
                                            esac ;;
 
@@ -622,7 +624,7 @@ while :
 						# Checking just to avoid errors if I kill the process and the user still want to check logs of a PID that does not exist
 						if [[ $answer2 == "Yes" || $answer2 == "yes" ]];then
 
-							#just hiding any output from the user especially if error occurred
+							#just hiding any output from the user especially if error occurred and trying both kill and kill -9
 	                                                if $sudo_cmd kill "$PID_tokill" > /dev/null 2>&1 ;then
 
 	                                                                if $sudo_cmd kill -9 "$PID_tokill" > /dev/null 2>&1 ;then
