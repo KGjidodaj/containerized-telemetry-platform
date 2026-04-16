@@ -23,6 +23,12 @@ echo "setting up .html and .sql files"
 #going back to the .yaml file
 cd ..
 
+echo "This might take some time"
+sleep 1
+
 # calling the composer (docker-compose)
 $sudo_cmd docker compose up -d --build
 
+echo "docker compose finished"
+
+$sudo_cmd docker exec -it sentinel_node bash

@@ -2,7 +2,7 @@ services:
 
   target-web:
     image: nginx
-    container-name: target-web
+    container_name: target-web
     ports:
       - "8080:80"
     depends_on:
@@ -14,7 +14,7 @@ services:
 
   target-db:
     image: mysql
-    container-name: target-db
+    container_name: target-db
     environment:
       MYSQL_DATABASE: MockDB
       MYSQL_ROOT_PASSWORD: "P@ssword123!"
@@ -26,7 +26,7 @@ services:
   sentinel_node:
     build: .
     image: sentinel-image
-    container-name: sentinel_node
+    container_name: sentinel_node
     tty: true
     stdin_open: true
     volumes:
