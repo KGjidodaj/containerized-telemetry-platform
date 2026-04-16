@@ -1,0 +1,40 @@
+services:
+
+  target-web:
+    image: nginx
+    container-name: target-web
+    ports:
+      - "8080:80"
+    depends_on:
+      - target-db
+    volumes:
+      - ./data_seeder/index.html:/usr/share/nginx/html/index.html
+    networks:
+      - cyber-range
+
+  target-db:
+    image: mysql
+    container-name: target-db
+    environment:
+      MYSQL_DATABASE: MockDB
+      MYSQL_ROOT_PASSWORD: "P@ssword123!"
+    volumes:
+      - ./data_seeder/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - cyber-range
+
+  sentinel_node:
+    build: .
+    image: sentinel-image
+    container-name: sentinel_node
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./logs:/opt/sentinel/logs
+    networks:
+      - cyber-range
+
+networks:
+  cyber-range:
+    ipam:
+       driver: default
