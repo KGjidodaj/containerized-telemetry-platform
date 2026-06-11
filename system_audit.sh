@@ -625,16 +625,16 @@ while :
 						if [[ $answer2 == "Yes" || $answer2 == "yes" ]];then
 
 							#just hiding any output from the user especially if error occurred and trying both kill and kill -9
-	                                                if $sudo_cmd kill "$PID_tokill" > /dev/null 2>&1 ;then
+                                                        if $sudo_cmd kill "$PID_tokill" > /dev/null 2>&1 ;then
+                                                                        echo "Killed process successesfully" | tee -a "$LOG_FILE"
+                                                        else
+                                                                if $sudo_cmd kill -9 "$PID_tokill" > /dev/null 2>&1 ;then
+                                                                        echo "Killed process successesfully" | tee -a "$LOG_FILE"
+                                                                else
+                                                                        echo "Could not kill process" | tee -a "$LOG_FILE"
+                                                                fi
 
-	                                                                if $sudo_cmd kill -9 "$PID_tokill" > /dev/null 2>&1 ;then
-	                                                                        echo "Could not kill process" | tee -a "$LOG_FILE"
-	                                                                else
-	                                                                        echo "Killed process successesfully" | tee -a "$LOG_FILE"
-	                                                                fi
-	                                                else
-	                                                        echo "Killed process successesfully" | tee -a "$LOG_FILE"
-	                                                fi
+                                                        fi
 						else
 
 	                                                if [[ $machine == "Docker" ]];then
