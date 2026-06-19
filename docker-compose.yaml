@@ -1,3 +1,4 @@
+---
 services:
 
   target-web:
@@ -37,4 +38,4 @@ services:
 networks:
   cyber-range:
     ipam:
-       driver: default
+      driver: default

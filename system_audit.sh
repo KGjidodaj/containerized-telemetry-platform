@@ -231,11 +231,11 @@ check_dependencies() {
                 echo -e "${Yellow}WARNING: Might Take Some Minutes!${Reset}"
 		# According to the package manager and os release
 
-                $sudo_cmd $Package_man_update  >/dev/null 2>&1 #updating in case machine has not been updated
-                $sudo_cmd $Package_man_install >/dev/null 2>&1 #trying to install the program in the background
+                $sudo_cmd "$Package_man_update"  >/dev/null 2>&1 #updating in case machine has not been updated
+                $sudo_cmd "$Package_man_install" >/dev/null 2>&1 #trying to install the program in the background
 
 
-                if [[ $? -ne 0 ]];then
+                if [[ $? -ne 0 ]];then #using exit code instead of the command as the condition
 
                         echo -e "${Red}Could not install.${Reset}"
                         echo -e "${White}Try updating and then installing iproute2${Reset}"

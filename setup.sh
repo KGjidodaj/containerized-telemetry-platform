@@ -19,7 +19,7 @@ echo "Setting up privilages for all the files"
 
 $sudo_cmd chmod +x system_audit.sh cleanup.sh >/dev/null 2>&1
 
-cd data_seeder
+cd data_seeder || exit
 
 $sudo_cmd chmod +x account_creation.sh password_generator.py username_generator.py >/dev/null 2>&1
 
