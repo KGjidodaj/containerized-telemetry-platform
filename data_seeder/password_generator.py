@@ -4,13 +4,17 @@
 import random as r
 
 def gen_password(length):
+    # Creating a pool to draw from with letters and special characters.
     pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-+={[}]|:;<,>.?"
     password = ""
 
+    # Using a for loop to add all characters one by one.
     for i in range(length):
-        random_parameter = r.randint(0,1000)
+
+       random_parameter = r.randint(0,1000)
         a = r.randint(0,9)
         b= r.choice(pool)
+
         if random_parameter <= 500:
             password = str(a) + password
         else:

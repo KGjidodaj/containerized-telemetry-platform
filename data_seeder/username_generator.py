@@ -4,8 +4,11 @@
 import random as r
 
 def username_generator(length):
+
+    # Using a pool to draw from, for the username.
     pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     username = ""
+
     for i in range(length):
         character = r.choice(pool)
         username = username + character

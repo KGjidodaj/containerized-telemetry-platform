@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Checking if python is missing and exiting while hiding output.
 if ! command -v python3 >/dev/null 2>&1 ;then
 	echo "Python missing install it first"
 	exit 1
